@@ -14,7 +14,6 @@ service Auth {
 message RegisterRequest {
   string email = 1;
   string password = 2;
-  bool is_admin = 3;
 }
 
 message RegisterResponse {
