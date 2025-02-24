@@ -9,6 +9,6 @@ tasks:
   generateauth:
     aliases:
       - genauth
-    desc: "Generate code from proto files (messenger auth)"
+    desc: "Generate code from proto files"
     cmds:
       - protoc -I proto proto/msgauth/msgauth.proto --go_out=./gen/go --go_opt=paths=source_relative --go-grpc_out=./gen/go --go-grpc_opt=paths=source_relative
