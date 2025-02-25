@@ -11,4 +11,10 @@ tasks:
       - genauth
     desc: "Generate code from proto files"
     cmds:
-      - protoc -I proto proto/msgauth/msgauth.proto --go_out=./gen/go --go_opt=paths=source_relative --go-grpc_out=./gen/go --go-grpc_opt=paths=source_relative
+      - protoc -I proto proto/messenger/msgauth/msgauth.proto --go_out=./gen/go --go_opt=paths=source_relative --go-grpc_out=./gen/go --go-grpc_opt=paths=source_relative
+  generatechat:
+    aliases:
+      - genchat
+    desc: "Generate code from proto files"
+    cmds:
+      - protoc -I proto proto/messenger/msgchat/msgchat.proto --go_out=./gen/go --go_opt=paths=source_relative --go-grpc_out=./gen/go --go-grpc_opt=paths=source_relative
