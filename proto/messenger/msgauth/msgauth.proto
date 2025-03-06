@@ -8,7 +8,8 @@ service Auth {
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Login (LoginRequest) returns (LoginResponse);
   rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
-
+  rpc GetUsernames (GetUsernamesRequest) returns (GetUsernamesResponse);
+  rpc GetUserIDs (GetUserIDsRequest) returns (GetUserIDsResponse);
 }
 
 message RegisterRequest {
@@ -36,4 +37,20 @@ message IsAdminRequest {
 
 message IsAdminResponse {
   bool is_admin = 1;
+}
+
+message GetUsernamesRequest {
+  repeated string user_ids = 1;
+}
+
+message GetUsernamesResponse {
+  map<string, string> usernames = 1;
+}
+
+message GetUserIDsRequest {
+  repeated string usernames = 1;
+}
+
+message GetUserIDsResponse {
+  map<string, string> user_ids = 1;
 }
