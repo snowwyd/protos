@@ -2,69 +2,133 @@ syntax = "proto3";
 
 package chat;
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
 option go_package = "snowwy.msg.v1.chat;msgv1chat";
 
 service Chat {
-    rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+    rpc CreateDM (CreateDMRequest) returns (CreateDMResponse);
+    rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+
+    rpc GetUserDMs (google.protobuf.Empty) returns (GetUserDMsResponse);
+    rpc GetUserGroups (google.protobuf.Empty) returns (GetUserGroupsResponse);
+
+    rpc GetDMInfo (GetDMInfoRequest) returns (GetDMInfoResponse);
+    rpc GetGroupInfo (GetGroupInfoRequest) returns (GetGroupInfoResponse);
+
     rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse);
-    rpc CreateChat (CreateChatRequest) returns (CreateChatResponse);
-    rpc GetUserChats (GetUserChatsRequest) returns (GetUserChatsResponse);
-    rpc DeleteMessage (DeleteMessageRequest) returns (DeleteMessageResponse);
+    rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  }
+
+  // CreateDM and CreateGroup
+  message CreateDMRequest {
+    string contact_id = 1;
   }
   
-  message SendMessageRequest {
-    string sender_id = 1;
-    string chat_id = 2;
-    string text = 3;
+  message CreateDMResponse {
+    string dm_id = 1;
   }
   
-  message SendMessageResponse {
-    string message_id = 1;
+  message CreateGroupRequest {
+    repeated string user_ids = 1;
+    string name = 2;
   }
   
+  message CreateGroupResponse {
+    string group_id = 1;
+  }
+
+
+  // GetUserDMs and GetUserGroups
+  message GetUserDMsResponse {
+    repeated DMPreview dms = 1;
+  }
+
+  message GetUserGroupsResponse {
+    repeated GroupPreview groups = 1;
+  }
+
+
+  // GetDMInfo and GetGroupInfo
+  message GetDMInfoRequest {
+    string dm_id = 1;
+  }
+
+  message GetDMInfoResponse {
+    string dm_id = 1;
+    string contact_id = 2;
+    repeated Channel channels = 3;
+  }
+
+  message GetGroupInfoRequest {
+    string group_id = 1;
+  }
+
+  message GetGroupInfoResponse {
+    string group_id = 1;
+    repeated string member_ids = 2;
+    repeated Channel channels = 3;
+    string name = 4;
+  }
+
+
+  // GetMessages и SendMessage
   message GetMessagesRequest {
-    string chat_id = 1;
+    string channel_id = 1;
     int32 limit = 2;
     int32 offset = 3;
   }
-  
+
   message GetMessagesResponse {
     repeated Message messages = 1;
   }
-  
+
+  message SendMessageRequest {
+    string channel_id = 1;
+    string text = 2;
+  }
+
+  message SendMessageResponse {
+    string message_id = 1;
+  }
+
+  // Сущности
+  message DM {
+    string dm_id = 1;
+    string contact_id = 2;
+    repeated string channel_ids = 3;
+  }
+
+  message DMPreview {
+    string dm_id = 1;
+    string contact_id = 2;
+  }
+
+  message Group {
+    string group_id = 1;
+    repeated string member_ids = 2;
+    repeated string channel_ids = 3;
+    string group_name = 4;
+  }
+
+  message GroupPreview {
+    string group_id = 1;
+    string group_name = 2;
+  }
+
+  message Channel {
+    string channel_id = 1;
+    string name = 2;
+    bool is_voice = 3;
+    bool is_group = 4;
+    repeated string message_ids = 5;
+    string chat_id = 6;
+  }
+
   message Message {
     string message_id = 1;
-    string sender_id = 2;
-    string text = 3;
-    string timestamp = 4;
+    string text = 2;
+    string sender_id = 3;
+    google.protobuf.Timestamp created_at = 4; 
   }
-  
-  message CreateChatRequest {
-    repeated string user_ids = 1;
-  }
-  
-  message CreateChatResponse {
-    string chat_id = 1;
-  }
-  
-  message GetUserChatsRequest {
-    string user_id = 1;
-  }
-  
-  message GetUserChatsResponse {
-    repeated ChatInfo chats = 1;
-  }
-  
-  message ChatInfo {
-    string chat_id = 1;
-    repeated string user_ids = 2;
-  }
-  
-  message DeleteMessageRequest {
-    string message_id = 1;
-  }
-  
-  message DeleteMessageResponse {
-    bool success = 1;
-  }
-  
