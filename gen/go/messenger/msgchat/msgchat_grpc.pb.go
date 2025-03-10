@@ -26,6 +26,7 @@ const (
 	Chat_GetUserGroups_FullMethodName = "/chat.Chat/GetUserGroups"
 	Chat_GetDMInfo_FullMethodName     = "/chat.Chat/GetDMInfo"
 	Chat_GetGroupInfo_FullMethodName  = "/chat.Chat/GetGroupInfo"
+	Chat_CreateChannel_FullMethodName = "/chat.Chat/CreateChannel"
 	Chat_GetMessages_FullMethodName   = "/chat.Chat/GetMessages"
 	Chat_SendMessage_FullMethodName   = "/chat.Chat/SendMessage"
 )
@@ -40,6 +41,7 @@ type ChatClient interface {
 	GetUserGroups(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserGroupsResponse, error)
 	GetDMInfo(ctx context.Context, in *GetDMInfoRequest, opts ...grpc.CallOption) (*GetDMInfoResponse, error)
 	GetGroupInfo(ctx context.Context, in *GetGroupInfoRequest, opts ...grpc.CallOption) (*GetGroupInfoResponse, error)
+	CreateChannel(ctx context.Context, in *CreateChannelRequest, opts ...grpc.CallOption) (*CreateChannelResponse, error)
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesResponse, error)
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 }
@@ -112,6 +114,16 @@ func (c *chatClient) GetGroupInfo(ctx context.Context, in *GetGroupInfoRequest, 
 	return out, nil
 }
 
+func (c *chatClient) CreateChannel(ctx context.Context, in *CreateChannelRequest, opts ...grpc.CallOption) (*CreateChannelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateChannelResponse)
+	err := c.cc.Invoke(ctx, Chat_CreateChannel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatClient) GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMessagesResponse)
@@ -142,6 +154,7 @@ type ChatServer interface {
 	GetUserGroups(context.Context, *emptypb.Empty) (*GetUserGroupsResponse, error)
 	GetDMInfo(context.Context, *GetDMInfoRequest) (*GetDMInfoResponse, error)
 	GetGroupInfo(context.Context, *GetGroupInfoRequest) (*GetGroupInfoResponse, error)
+	CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error)
 	GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesResponse, error)
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	mustEmbedUnimplementedChatServer()
@@ -171,6 +184,9 @@ func (UnimplementedChatServer) GetDMInfo(context.Context, *GetDMInfoRequest) (*G
 }
 func (UnimplementedChatServer) GetGroupInfo(context.Context, *GetGroupInfoRequest) (*GetGroupInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupInfo not implemented")
+}
+func (UnimplementedChatServer) CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateChannel not implemented")
 }
 func (UnimplementedChatServer) GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
@@ -307,6 +323,24 @@ func _Chat_GetGroupInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Chat_CreateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServer).CreateChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Chat_CreateChannel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServer).CreateChannel(ctx, req.(*CreateChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Chat_GetMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMessagesRequest)
 	if err := dec(in); err != nil {
@@ -373,6 +407,10 @@ var Chat_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetGroupInfo",
 			Handler:    _Chat_GetGroupInfo_Handler,
+		},
+		{
+			MethodName: "CreateChannel",
+			Handler:    _Chat_CreateChannel_Handler,
 		},
 		{
 			MethodName: "GetMessages",

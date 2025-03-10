@@ -17,6 +17,8 @@ service Chat {
     rpc GetDMInfo (GetDMInfoRequest) returns (GetDMInfoResponse);
     rpc GetGroupInfo (GetGroupInfoRequest) returns (GetGroupInfoResponse);
 
+    rpc CreateChannel (CreateChannelRequest) returns (CreateChannelResponse);
+
     rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse);
     rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
   }
@@ -70,6 +72,18 @@ service Chat {
     repeated string member_ids = 2;
     repeated Channel channels = 3;
     string name = 4;
+  }
+
+  // CreateChannel
+  message CreateChannelRequest {
+    string name = 1;
+    bool is_voice = 2;
+    bool is_group = 3;
+    string chat_id = 4;
+  }
+
+  message CreateChannelResponse {
+    string channel_id = 1;
   }
 
 
