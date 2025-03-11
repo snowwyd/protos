@@ -36,7 +36,7 @@ service Conversation {
   }
 
   message GetUserChatsResponse {
-    repeated ChatPreview groups = 1;
+    repeated ChatPreview chats = 1;
   }
 
 
