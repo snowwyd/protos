@@ -1,21 +1,17 @@
 syntax = "proto3";
 
-package chat;
+package conversation;
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "snowwy.msg.v1.chat;msgv1chat";
+option go_package = "snowwy.msg.v1.conversation;msgv1chat";
 
-service Chat {
-    rpc CreateDM (CreateDMRequest) returns (CreateDMResponse);
-    rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+service Conversation {
+    rpc CreateChat (CreateChatRequest) returns (CreateChatResponse);
 
-    rpc GetUserDMs (google.protobuf.Empty) returns (GetUserDMsResponse);
-    rpc GetUserGroups (google.protobuf.Empty) returns (GetUserGroupsResponse);
+    rpc GetUserChats (GetUserChatsRequest) returns (GetUserChatsResponse);
 
-    rpc GetDMInfo (GetDMInfoRequest) returns (GetDMInfoResponse);
-    rpc GetGroupInfo (GetGroupInfoRequest) returns (GetGroupInfoResponse);
+    rpc GetChatInfo (GetChatInfoRequest) returns (GetChatInfoResponse);
 
     rpc CreateChannel (CreateChannelRequest) returns (CreateChannelResponse);
 
@@ -23,63 +19,46 @@ service Chat {
     rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
   }
 
-  // CreateDM and CreateGroup
-  message CreateDMRequest {
-    string contact_id = 1;
-  }
-  
-  message CreateDMResponse {
-    string dm_id = 1;
-  }
-  
-  message CreateGroupRequest {
-    repeated string user_ids = 1;
+  // CreateChat
+  message CreateChatRequest {
+    string type = 1;
     string name = 2;
+    repeated string user_ids = 3;
   }
   
-  message CreateGroupResponse {
-    string group_id = 1;
+  message CreateChatResponse {
+    string chat_id = 1;
+  }
+  
+  // GetUserChats
+  message GetUserChatsRequest {
+    string type = 1;
+  }
+
+  message GetUserChatsResponse {
+    repeated ChatPreview groups = 1;
   }
 
 
-  // GetUserDMs and GetUserGroups
-  message GetUserDMsResponse {
-    repeated DMPreview dms = 1;
+  // GetChatInfo
+  message GetChatInfoRequest {
+    string chat_id = 1;
   }
 
-  message GetUserGroupsResponse {
-    repeated GroupPreview groups = 1;
-  }
-
-
-  // GetDMInfo and GetGroupInfo
-  message GetDMInfoRequest {
-    string dm_id = 1;
-  }
-
-  message GetDMInfoResponse {
-    string dm_id = 1;
-    string contact_id = 2;
-    repeated Channel channels = 3;
-  }
-
-  message GetGroupInfoRequest {
-    string group_id = 1;
-  }
-
-  message GetGroupInfoResponse {
-    string group_id = 1;
-    repeated string member_ids = 2;
-    repeated Channel channels = 3;
-    string name = 4;
+  message GetChatInfoResponse {
+    string chat_id = 1;
+    string type = 2;
+    string name = 3; 
+    repeated string member_ids = 4;
+    repeated Channel channels = 5;
   }
 
   // CreateChannel
   message CreateChannelRequest {
-    string name = 1;
-    bool is_voice = 2;
-    bool is_group = 3;
-    string chat_id = 4;
+    string chat_id = 1;
+    string name = 2;
+    string type = 3;
+    
   }
 
   message CreateChannelResponse {
@@ -108,41 +87,32 @@ service Chat {
   }
 
   // Сущности
-  message DM {
-    string dm_id = 1;
-    string contact_id = 2;
-    repeated string channel_ids = 3;
+  message Chat {
+    string chat_id = 1;
+    string type = 2;
+    string name = 3;
+    repeated string member_ids = 4;
+    repeated string channel_ids = 5;
   }
 
-  message DMPreview {
-    string dm_id = 1;
-    string contact_id = 2;
-  }
-
-  message Group {
-    string group_id = 1;
-    repeated string member_ids = 2;
-    repeated string channel_ids = 3;
-    string group_name = 4;
-  }
-
-  message GroupPreview {
-    string group_id = 1;
-    string group_name = 2;
+  message ChatPreview {
+    string chat_id = 1;
+    string name = 2;
   }
 
   message Channel {
     string channel_id = 1;
-    string name = 2;
-    bool is_voice = 3;
-    bool is_group = 4;
+    string chat_id = 2;
+    string name = 3;
+    string type = 4;
     repeated string message_ids = 5;
-    string chat_id = 6;
+    
   }
 
   message Message {
     string message_id = 1;
-    string text = 2;
-    string sender_id = 3;
-    google.protobuf.Timestamp created_at = 4; 
+    string channel_id = 2;
+    string text = 3;
+    string sender_id = 4;
+    google.protobuf.Timestamp created_at = 5; 
   }
