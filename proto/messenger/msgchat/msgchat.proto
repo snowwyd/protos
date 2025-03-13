@@ -17,6 +17,9 @@ service Conversation {
 
     rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse);
     rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+
+    // Bidirectional streaming (WIP)
+    rpc ChatStream (stream ChatStreamRequest) returns (stream ChatStreamResponse);
   }
 
   // CreateChat
@@ -86,6 +89,20 @@ service Conversation {
     string message_id = 1;
   }
 
+  // ChatStream
+  message ChatStreamRequest {
+    oneof payload {
+      SendMessageRequest send_message = 1;
+      string channel_id = 2;
+    }
+  }
+  
+  message ChatStreamResponse {
+    oneof payload {
+      Message new_message = 1;
+      string error_message = 2;
+    }
+  }
   // Сущности
   message Chat {
     string chat_id = 1;
